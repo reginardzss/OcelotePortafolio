@@ -18,7 +18,12 @@
 }
 
 body {
-  color: var(--foreground);
+  color: white;
   background: var(--background);
   font-family: var(--font-work-sans), Arial, Helvetica, sans-serif;
+  font-weight: 700;
+}
+
+a {
+  @apply hover:text-oceloteRed;
 }
