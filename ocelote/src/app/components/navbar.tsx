@@ -20,7 +20,7 @@ const Navbar: React.FC = () => {
                   <Link to="/">ABOUT US</Link>
               </li>
               <li className="px-4">
-                  <Link to="/">PROJECTS</Link>
+                  <Link to="/projects">PROJECTS</Link>
               </li>
               <li className="pl-4">
                   <Link to="/">CONTACT US</Link>
