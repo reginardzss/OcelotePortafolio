@@ -1,25 +1,14 @@
-"use client";
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Navbar from './components/navbar';
-import Home from './pages/home';
-import Projects from './pages/projects';
-//import About from './pages/About';
-//import Projects from './pages/Projects';
-//import Contact from './pages/Contact';
+"use client"; // Solo si es necesario
+import React from "react";
+import Navbar from "./components/navbar";
+import Home from "./pages/home/page";
 
 const App: React.FC = () => {
   return (
-    <Router>
-      <div className="App">
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/projects" element={<Projects />} />
-        </Routes>
-      </div>
-    </Router>
+    <div className="App">
+      <Home />
+    </div>
   );
-}
+};
 
-export default App;
+export default App;  
