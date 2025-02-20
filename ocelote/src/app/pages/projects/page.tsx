@@ -1,13 +1,11 @@
-import React from 'react';
-import ProjectPreview from '../../components/projectPreview';
+// pages/projects.tsx
+import ProjectList from "@/app/components/ProjectList";
 
-
-const Projects: React.FC = () => {
+export default function Projects() {
   return (
-    <div>
-      <ProjectPreview/>
+    <div className="p-8">
+      <h1 className="text-2xl font-bold text-white">Nuestros Proyectos</h1>
+      <ProjectList />
     </div>
   );
-};
-
-export default Projects;
+}
