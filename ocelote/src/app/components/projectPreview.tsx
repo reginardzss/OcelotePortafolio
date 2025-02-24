@@ -15,9 +15,9 @@ const ProjectPreview: React.FC<Props> = ({ project }) => {
     <div className="flex flex-col items-center w-fit">
       <Link href="/">
       <Image
-        src="/assets/still-ejemplo.jpg" // Reemplázalo con una URL real
-        height={200}
-        width={300}
+        src={project.image_url}
+        height={300}
+        width={500}
         alt={project.project_name}
       />
       <div className="font-medium text-center">

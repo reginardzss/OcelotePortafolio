@@ -13,7 +13,13 @@ export default function ProjectList() {
     const fetchProjects = async () => {
       const { data, error } = await supabase
         .from("project")
-        .select("id, project_name, project_type, created, delivery_date, client:client_id(id, client_name)");
+        .select(`id, 
+          project_name, 
+          project_type, 
+          created, delivery_date, 
+          client:client_id(id, client_name),
+          assets:assets(project_id, url_media)
+          `);
   
       console.log("🔍 Datos recibidos de Supabase:", data);
   
@@ -21,15 +27,14 @@ export default function ProjectList() {
         console.error("❌ Error fetching projects:", error);
       } else {
         // 🔹 Asegurar que `client` sea un objeto único en lugar de un array
-        const transformedData = data.map((project) => ({
+        const transformedData = data.map((project: any) => ({
           ...project,
-          client_name: Array.isArray(project.client) && project.client.length > 0
-            ? project.client[0].client_name // ✅ Tomamos el primer elemento del array
-            : "Sin cliente" // 🔹 Valor por defecto si no hay cliente
+          client_name: project.client ? project.client.client_name : "Sin cliente",
+          image_url: project.assets && project.assets.length > 0 
+            ? project.assets[0].url_media // ✅ Tomar la primera imagen asociada
+            : "/assets/ocelotefilms-default.jpeg" // 🔹 Imagen por defecto si no hay asset
         }));
-  
-        
-        
+
         console.log("🔍 Datos transformados:", transformedData);
         setProjects(transformedData);
       }

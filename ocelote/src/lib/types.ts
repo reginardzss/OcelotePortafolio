@@ -6,12 +6,6 @@ export type Project = {
     created: string;
     delivery_date: string;
     client: any;
+    image_url: string;
   };
 
-export type Client = {
-    id: number;
-    client_name: string;
-    created_at: string;
-  };
-
-  
