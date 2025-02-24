@@ -1,10 +1,17 @@
 // lib/types.ts
 export type Project = {
     id: number;
-    name: string;
-    client: string;
-    type: string;
+    project_name: string;
+    project_type: string;
     created: string;
-    deliveryDate: string;
+    delivery_date: string;
+    client: any;
   };
+
+export type Client = {
+    id: number;
+    client_name: string;
+    created_at: string;
+  };
+
   

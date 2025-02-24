@@ -8,7 +8,8 @@ type Props = {
 };
 
 const ProjectPreview: React.FC<Props> = ({ project }) => {
-  const year = new Date(project.deliveryDate).getFullYear(); // Extraer el año
+  const year = new Date(project.delivery_date).getFullYear(); // Extraer el año
+  console.log("Project data:", project);
 
   return (
     <div className="flex flex-col items-center w-fit">
@@ -17,10 +18,10 @@ const ProjectPreview: React.FC<Props> = ({ project }) => {
         src="/assets/still-ejemplo.jpg" // Reemplázalo con una URL real
         height={200}
         width={300}
-        alt={project.name}
+        alt={project.project_name}
       />
       <div className="font-medium text-center">
-        <div className="text-white">{project.name} - {project.client}</div>
+        <div className="text-white">{project.project_name} - {project.client.client_name }</div>
         <div className="text-gray-300">{year}</div>
       </div>
       </Link>
