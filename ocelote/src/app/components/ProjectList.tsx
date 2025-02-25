@@ -18,7 +18,7 @@ export default function ProjectList() {
           project_type, 
           created, delivery_date, 
           client:client_id(id, client_name),
-          assets:assets(project_id, url_media)
+          assets:assets(url_media, media_use)
           `);
   
       console.log("🔍 Datos recibidos de Supabase:", data);
@@ -27,12 +27,11 @@ export default function ProjectList() {
         console.error("❌ Error fetching projects:", error);
       } else {
         // 🔹 Asegurar que `client` sea un objeto único en lugar de un array
-        const transformedData = data.map((project: any) => ({
+
+        const transformedData = data.map((project:any) => ({
           ...project,
           client_name: project.client ? project.client.client_name : "Sin cliente",
-          image_url: project.assets && project.assets.length > 0 
-            ? project.assets[0].url_media // ✅ Tomar la primera imagen asociada
-            : "/assets/ocelotefilms-default.jpeg" // 🔹 Imagen por defecto si no hay asset
+          image_url: project.assets?.find(asset => asset.media_use === "cover")?.url_media || "/assets/default.jpg" // ✅ Obtener solo la portada
         }));
 
         console.log("🔍 Datos transformados:", transformedData);

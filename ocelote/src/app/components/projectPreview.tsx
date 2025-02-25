@@ -16,7 +16,7 @@ const ProjectPreview: React.FC<Props> = ({ project }) => {
       <Link href={`/pages/detail/${project.id}`}>
       <div className="p-4">
         <Image
-          src={project.image_url}
+          src={project.image_url || "/assets/default.jpg"} // ✅ Imagen por defecto si no hay portada
           height={300}
           width={500}
           alt={project.project_name}

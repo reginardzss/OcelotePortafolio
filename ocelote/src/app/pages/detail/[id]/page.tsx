@@ -1,32 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation"; // 🔹 Para obtener el `id` de la URL
+import { useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-
-type Asset = {
-  id: number;
-  media_type: string;
-  url_media: string;
-};
-
-type Project = {
-  id: number;
-  project_name: string;
-  assets: Asset[];
-};
+import { Project, Asset } from "@/lib/types";
 
 export default function ProjectDetail() {
-  const { id } = useParams(); // 🔹 Obtener el `id` de la URL
+  const { id } = useParams();
   const [project, setProject] = useState<Project | null>(null);
+  const [mediaAssets, setMediaAssets] = useState<Asset[]>([]);
 
   useEffect(() => {
     const fetchProject = async () => {
       const { data, error } = await supabase
         .from("project")
-        .select("id, project_name, assets:assets(url_media, media_type)")
-        .eq("id", id) // 🔹 Filtrar por el ID dinámico
-        .single(); // 🔹 Tomar solo un resultado
+        .select("id, project_name")
+        .eq("id", id)
+        .single();
 
       if (error) {
         console.error("❌ Error fetching project:", error);
@@ -35,7 +25,24 @@ export default function ProjectDetail() {
       }
     };
 
-    if (id) fetchProject();
+    const fetchAssets = async () => {
+      const { data, error } = await supabase
+        .from("assets")
+        .select("id, url_media, media_type")
+        .eq("project_id", id)
+        .eq("media_use", "media"); // ✅ Filtrar solo assets de contenido
+
+      if (error) {
+        console.error("❌ Error fetching assets:", error);
+      } else {
+        setMediaAssets(data);
+      }
+    };
+
+    if (id) {
+      fetchProject();
+      fetchAssets();
+    }
   }, [id]);
 
   if (!project) return <p className="text-center text-white">Cargando...</p>;
@@ -45,7 +52,7 @@ export default function ProjectDetail() {
       <h1 className="text-3xl font-bold text-white">{project.project_name}</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-        {project.assets.map((asset) => (
+        {mediaAssets.map((asset) => (
           <div key={asset.id} className="w-full">
             {asset.media_type === "video" ? (
               <video controls className="w-full rounded-lg shadow-lg">
