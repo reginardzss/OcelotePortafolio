@@ -1,4 +1,6 @@
 // components/ProjectPreview.tsx
+"use client";
+
 import Image from "next/image";
 import { Project } from "@/lib/types";
 import Link from "next/link";
