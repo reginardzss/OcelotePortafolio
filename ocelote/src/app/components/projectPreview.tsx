@@ -13,14 +13,16 @@ const ProjectPreview: React.FC<Props> = ({ project }) => {
 
   return (
     <div className="flex flex-col items-center w-fit">
-      <Link href="/">
-      <Image
-        src={project.image_url}
-        height={300}
-        width={500}
-        alt={project.project_name}
-      />
-      <div className="font-medium text-center">
+      <Link href={`/pages/detail/${project.id}`}>
+      <div className="p-4">
+        <Image
+          src={project.image_url}
+          height={300}
+          width={500}
+          alt={project.project_name}
+        />
+      </div>
+      <div className="font-medium text-center text-lg">
         <div className="text-white">{project.project_name} - {project.client.client_name }</div>
         <div className="text-gray-300">{year}</div>
       </div>
