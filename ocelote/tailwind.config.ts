@@ -11,7 +11,8 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-        oceloteRed: "#ED4134"
+        oceloteRed: "#ED4134",
+        ocoloteRedHover: "#f1574b"
       },
     },
   },
