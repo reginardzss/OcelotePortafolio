@@ -9,7 +9,7 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
   return (
     <div>
       {/* ✅ Mostrar Navbar solo si NO estamos en /login */}
-      {pathname !== "/pages/admin/login" && <Navbar />}
+      {pathname !== "/pages/admin/login" && pathname !== "/pages/admin/register" && <Navbar />}
       <main>{children}</main>
     </div>
   );

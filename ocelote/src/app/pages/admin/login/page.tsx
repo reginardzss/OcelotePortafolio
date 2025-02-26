@@ -1,77 +1,55 @@
 "use client";
+import Link from "next/link";
+import Image from "next/image";
 
 export default function Login() {
     return (
-      <>
-        {/*
-          This example requires updating your template:
-  
-          ```
-          <html class="h-full bg-white">
-          <body class="h-full">
-          ```
-        */}
-        <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-          <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+    <section>
+    <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+        <Link href="/" className="flex items-center mb-6">
             <img
-              alt="Your Company"
-              src="/logo/ocelote-logo-blanco4x.png"
-              className="mx-auto h-10 w-auto"
-            />
-            <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight ">
-              Sign in to your account
-            </h2>
-          </div>
-  
-          <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-            <form action="#" method="POST" className="space-y-6">
-              <div>
-                <label htmlFor="email" className="block text-sm/6 font-medium ">
-                  Email address
-                </label>
-                <div className="mt-2">
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    required
-                    autoComplete="email"
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-oceloteRed sm:text-sm/6"
-                  />
-                </div>
-              </div>
-  
-              <div>
-                <div className="flex items-center justify-between">
-                  <label htmlFor="password" className="block text-sm/6 font-medium ">
-                    Password
-                  </label>
-
-                </div>
-                <div className="mt-2">
-                  <input
-                    id="password"
-                    name="password"
-                    type="password"
-                    required
-                    autoComplete="current-password"
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-oceloteRed sm:text-sm/6"
-                  />
-                </div>
-              </div>
-  
-              <div>
-                <button
-                  type="submit"
-                  className="flex w-full justify-center rounded-md bg-oceloteRed px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-ocoloteRedHover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-oceloteRed"
-                >
-                  Sign in
-                </button>
-              </div>
-            </form>
-          </div>
+            alt="Ocelote Films"
+            src="/logo/ocelote-logo-blanco4x.png"
+            className="mx-auto h-12 w-auto"
+            />    
+        </Link>
+        <div className="w-full rounded-lg shadow border md:mt-0 sm:max-w-md xl:p-0 bg-zinc-900 border-zinc-700">
+            <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
+                <h1 className="text-xl font-bold leading-tight tracking-tight md:text-2xl">
+                    Sign in to your account
+                </h1>
+                <form className="space-y-4 md:space-y-6" action="#">
+                    <div>
+                        <label htmlFor="email" className="block mb-2 text-sm font-medium">Your email</label>
+                        <input type="email" name="email" id="email" className="border rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-zinc-700 border-zinc-600 placeholder-zinc-400" placeholder="name@company.com" required />
+                    </div>
+                    <div>
+                        <label htmlFor="password" className="block mb-2 text-sm font-medium">Password</label>
+                        <input type="password" name="password" id="password" placeholder="••••••••" className="border rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-zinc-700 border-zinc-600 placeholder-zinc-400" required />
+                    </div>
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-start">
+                            <div className="flex items-center h-5">
+                                <input id="remember" aria-describedby="remember" type="checkbox" className="w-4 h-4 border rounded focus:ring-3 focus:ring-primary-300 bg-zinc-700 border-zinc-600 dark:focus:ring-primary-600 ring-offset-zinc-800" required />
+                            </div>
+                            <div className="ml-3 text-sm">
+                                <label htmlFor="remember" className="text-gray-500 dark:text-gray-300">Remember me</label>
+                            </div>
+                        </div>
+                        <a href="#" className="text-sm font-medium hover:underline">Forgot password?</a>
+                    </div>
+                    <button type="submit" className="w-full bg-oceloteRed hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center hover:bg-oceloteRedHover focus:ring-primary-800">Sign in</button>
+                    <p className="text-sm font-light">
+                        Don’t have an account yet? 
+                        <Link href="/pages/admin/register" className="font-medium text-primary-600 hover:underline">
+                             Sign up
+                        </Link>
+                    </p>
+                </form>
+            </div>
         </div>
-      </>
+    </div>
+    </section>
     );
   }
   
