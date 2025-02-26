@@ -1,8 +1,34 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
+import { supabase } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
+    const router = useRouter();
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
+
+    const handleLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+        setError("");
+
+        const {error} = await supabase.auth.signInWithPassword({
+            email,
+            password,
+        });
+
+        if(error) {
+            setError(error.message);
+        } else {
+            router.push("/admin"); //Redirige al dashboard de admin
+        }
+    }
+
     return (
     <section>
     <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
@@ -18,14 +44,31 @@ export default function Login() {
                 <h1 className="text-xl font-bold leading-tight tracking-tight md:text-2xl">
                     Sign in to your account
                 </h1>
-                <form className="space-y-4 md:space-y-6" action="#">
+                {error && <p className="text-red-500">{error}</p>}
+                <form className="space-y-4 md:space-y-6" onSubmit={handleLogin}>
                     <div>
                         <label htmlFor="email" className="block mb-2 text-sm font-medium">Your email</label>
-                        <input type="email" name="email" id="email" className="border rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-zinc-700 border-zinc-600 placeholder-zinc-400" placeholder="name@company.com" required />
+                        <input 
+                            type="email" 
+                            name="email" 
+                            id="email" 
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="border rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-zinc-700 border-zinc-600 placeholder-zinc-400" 
+                            placeholder="name@company.com" 
+                            required />
                     </div>
                     <div>
                         <label htmlFor="password" className="block mb-2 text-sm font-medium">Password</label>
-                        <input type="password" name="password" id="password" placeholder="••••••••" className="border rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-zinc-700 border-zinc-600 placeholder-zinc-400" required />
+                        <input 
+                            type="password" 
+                            name="password" 
+                            id="password" 
+                            placeholder="••••••••" 
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="border rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-zinc-700 border-zinc-600 placeholder-zinc-400" 
+                            required />
                     </div>
                     <div className="flex items-center justify-between">
                         <div className="flex items-start">
@@ -38,7 +81,11 @@ export default function Login() {
                         </div>
                         <a href="#" className="text-sm font-medium hover:underline">Forgot password?</a>
                     </div>
-                    <button type="submit" className="w-full bg-oceloteRed hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center hover:bg-oceloteRedHover focus:ring-primary-800">Sign in</button>
+                    <button 
+                        type="submit" 
+                        className="w-full bg-oceloteRed hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center hover:bg-oceloteRedHover focus:ring-primary-800">
+                        {loading ? "Signing in..." : "Sign in"}
+                    </button>
                     <p className="text-sm font-light">
                         Don’t have an account yet? 
                         <Link href="/pages/admin/register" className="font-medium text-primary-600 hover:underline">
