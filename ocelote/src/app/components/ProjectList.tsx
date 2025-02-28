@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { Project } from "@/lib/types";
+import { Project, Asset } from "@/lib/types";
 import ProjectPreview from "./projectPreview";
 
 export default function ProjectList() {
@@ -20,26 +20,23 @@ export default function ProjectList() {
           client:client_id(id, client_name),
           assets:assets(url_media, media_use)
           `);
-  
-      console.log("🔍 Datos recibidos de Supabase:", data);
-  
+    
       if (error) {
         console.error("❌ Error fetching projects:", error);
       } else {
-        // 🔹 Asegurar que `client` sea un objeto único en lugar de un array
-
+        // Transformar datos
         const transformedData = data.map((project:any) => ({
-          ...project,
-          client_name: project.client ? project.client.client_name : "Sin cliente",
-          image_url: project.assets?.find(asset => asset.media_use === "cover")?.url_media || "/assets/default.jpg" // ✅ Obtener solo la portada
+          ...project, //Mantener todos los datos
+          client_name: project.client ? project.client.client_name : "Sin cliente", // Obtener el nombre del cliente
+          image_url: project.assets?.find((asset: Asset) => asset.media_use === "cover")?.url_media || "/assets/default.jpg" // Obtener solo la portada
         }));
 
-        console.log("🔍 Datos transformados:", transformedData);
+        // Actualizar el estado
         setProjects(transformedData);
       }
     };
   
-    fetchProjects();
+    fetchProjects(); // Ejecutar la función
   }, []);
   
 
