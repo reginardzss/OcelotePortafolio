@@ -6,28 +6,59 @@ import { supabase } from "@/lib/supabase";
 export default function Register() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
 
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setError("");
 
-        const { error } = await supabase.auth.signUp({
+        //Validar que las contraseñas coincidan
+        if (password !== confirmPassword) {
+            setError("Passwords do not match");
+            setLoading(false);
+            return;
+        }
+
+        //Registrar el usuario en Supabase Auth
+        const { data, error } = await supabase.auth.signUp({
             email,
             password,
         });
 
+        //Si hay un error, mostrarlo y detener la ejecución
         if (error) {
             setError(error.message);
+            setLoading(false);
+            return;
+        } 
+        //Insertar nombre y apellido en la tabla "admin_users"
+        const {error:dbError} = await supabase.from("admin_users").insert([
+            {
+                user_id: data.user?.id, //Usa el mismo ID de Supabase Auth
+                email: email,
+                first_name: firstName,
+                last_name: lastName,
+            },
+        ]);
+
+        //Si hay un error, mostrarlo y detener la ejecución
+        if (dbError) {
+            setError(dbError.message);
+            setLoading(false);
+            return;
         } else {
-            alert("Success. Check your email for the confirmation link.");
+            alert("✅ Registro exitoso. Revisa tu correo para verificar tu cuenta."); 
         }
+        //Finalizar la carga
         setLoading(false);
     };
     return (
-        <section>
+        <div>
         <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
             <Link href="/" className="flex items-center mb-6">
                 <img
@@ -44,6 +75,31 @@ export default function Register() {
                     {error && <p className="text-red-500">{error}</p>}
                     <form className="space-y-4 md:space-y-6" onSubmit={handleRegister}>
                         <div>
+                            <label htmlFor="fname" className="block mb-2 text-sm font-medium">Your first name</label>
+                            <input 
+                                type="text" 
+                                name="fname" 
+                                id="fname" 
+                                value={firstName}
+                                onChange={(e) => setFirstName(e.target.value)}
+                                className="text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-zinc-700 border-zinc-600 placeholder-zinc-400 " 
+                                placeholder="Luis" 
+                                required />
+                        </div>
+                        <div>
+                            <label htmlFor="lname" className="block mb-2 text-sm font-medium">Your last name</label>
+                            <input 
+                                type="text" 
+                                name="lname" 
+                                id="lname" 
+                                value={lastName}
+                                onChange={(e) => setLastName(e.target.value)}
+                                className="text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-zinc-700 border-zinc-600 placeholder-zinc-400 " 
+                                placeholder="Perez" 
+                                required />
+                        </div>
+                        
+                        <div>
                             <label htmlFor="email" className="block mb-2 text-sm font-medium">Your email</label>
                             <input 
                                 type="email" 
@@ -52,7 +108,7 @@ export default function Register() {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 className="text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-zinc-700 border-zinc-600 placeholder-zinc-400 " 
-                                placeholder="name@company.com" 
+                                placeholder="name@ocelotefilms.com" 
                                 required />
                         </div>
                         <div>
@@ -69,7 +125,15 @@ export default function Register() {
                         </div>
                         <div>
                             <label htmlFor="confirm-password" className="block mb-2 text-sm font-medium">Confirm password</label>
-                            <input type="confirm-password" name="confirm-password" id="confirm-password" placeholder="••••••••" className="text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-zinc-700 border-zinc-600 placeholder-zinc-400" required/>
+                            <input 
+                                type="confirm-password" 
+                                name="confirm-password" 
+                                id="confirm-password" 
+                                placeholder="••••••••" 
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                className="text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-zinc-700 border-zinc-600 placeholder-zinc-400" 
+                                required/>
                         </div>
                         <div className="flex items-start">
                             <div className="flex items-center h-5">
@@ -96,7 +160,7 @@ export default function Register() {
                 </div>
             </div>
         </div>
-        </section>
+        </div>
     );
   }
   
