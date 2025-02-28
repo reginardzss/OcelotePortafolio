@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
@@ -15,7 +14,7 @@ export default function Register() {
         setLoading(true);
         setError("");
 
-        const { user, error } = await supabase.auth.signUp({
+        const { error } = await supabase.auth.signUp({
             email,
             password,
         });
