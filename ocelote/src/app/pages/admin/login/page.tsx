@@ -1,27 +1,29 @@
 "use client";
 import Link from "next/link";
-import Image from "next/image";
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 
 export default function Login() {
-    const router = useRouter();
+    const router = useRouter(); //Obtener el router
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
+    //Función para iniciar sesión
     const handleLogin = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setLoading(true);
-        setError("");
+        e.preventDefault(); //Evitar que el formulario recargue la página
+        setLoading(true); //Mostrar mensaje de carga
+        setError(""); //Limpiar mensajes de error
 
+        //Iniciar sesión con Supabase Auth
         const {error} = await supabase.auth.signInWithPassword({
             email,
             password,
         });
 
+        //Si hay un error, mostrarlo y detener la ejecución
         if(error) {
             setError(error.message);
         } else {

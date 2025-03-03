@@ -6,11 +6,12 @@ import { supabase } from "@/lib/supabase";
 import { Project, Asset } from "@/lib/types";
 
 export default function ProjectDetail() {
-  const { id } = useParams();
-  const [project, setProject] = useState<Project | null>(null);
-  const [mediaAssets, setMediaAssets] = useState<Asset[]>([]);
+  const { id } = useParams(); // Obtener el id de la URL
+  const [project, setProject] = useState<Project | null>(null); // Estado para almacenar el proyecto
+  const [mediaAssets, setMediaAssets] = useState<Asset[]>([]); // Estado para almacenar los assets de contenido
 
   useEffect(() => {
+    // Función para obtener el proyecto
     const fetchProject = async () => {
       const { data, error } = await supabase
         .from("project")
@@ -21,16 +22,17 @@ export default function ProjectDetail() {
       if (error) {
         console.error("❌ Error fetching project:", error);
       } else {
-        setProject(data);
+        setProject(data); // Actualizar el estado
       }
     };
 
+    // Función para obtener los assets de contenido
     const fetchAssets = async () => {
       const { data, error } = await supabase
         .from("assets")
         .select("id, url_media, media_type")
         .eq("project_id", id)
-        .eq("media_use", "media"); // ✅ Filtrar solo assets de contenido
+        .eq("media_use", "media"); // Filtrar solo assets de contenido
 
       if (error) {
         console.error("❌ Error fetching assets:", error);
@@ -39,12 +41,14 @@ export default function ProjectDetail() {
       }
     };
 
+    // Ejecutar las funciones
     if (id) {
       fetchProject();
       fetchAssets();
     }
-  }, [id]);
+  }, [id]); // Ejecutar solo al cargar el componente
 
+    // Si no hay proyecto, mostrar un mensaje
   if (!project) return <p className="text-center text-white">Cargando...</p>;
 
   return (

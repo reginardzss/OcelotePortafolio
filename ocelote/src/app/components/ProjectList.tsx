@@ -7,7 +7,7 @@ import { Project, Asset } from "@/lib/types";
 import ProjectPreview from "./projectPreview";
 
 export default function ProjectList() {
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]); // Estado para almacenar los proyectos
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -20,11 +20,12 @@ export default function ProjectList() {
           client:client_id(id, client_name),
           assets:assets(url_media, media_use)
           `);
-    
+      
+      // Manejar errores
       if (error) {
         console.error("❌ Error fetching projects:", error);
       } else {
-        // Transformar datos
+        // Transformar los datos
         const transformedData = data.map((project:any) => ({
           ...project, //Mantener todos los datos
           client_name: project.client ? project.client.client_name : "Sin cliente", // Obtener el nombre del cliente

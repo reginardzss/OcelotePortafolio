@@ -1,5 +1,4 @@
 import React from 'react';
-import ClientOnly from './client/ClientOnly';
 
 const Hero: React.FC = () => {
   return (

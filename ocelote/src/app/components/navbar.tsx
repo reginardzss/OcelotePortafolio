@@ -5,7 +5,6 @@ const Navbar: React.FC = () => {
   return (
     <nav className="sticky top-0 z-10 bg-black">
       <div className="flex w-screen h-16 items-center p-8">
-        {/* Logo */}
         <Link href="/">
           <Image
             src="/logo/ocelote-logo-blanco4x.png"
@@ -14,8 +13,7 @@ const Navbar: React.FC = () => {
             alt="Ocelote Logo"
           />
         </Link>
-
-        {/* Menú */}
+        
         <div className="w-full flex flex-row-reverse">
           <ul className="flex flex-row text-white">
             <li className="px-4">
