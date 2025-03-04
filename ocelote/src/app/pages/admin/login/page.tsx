@@ -27,7 +27,7 @@ export default function Login() {
         if(error) {
             setError(error.message);
         } else {
-            router.push("/pages/admin/dashboard"); //Redirige al dashboard de admin
+            router.push("/pages/admin/content/dashboard"); //Redirige al dashboard de admin
         }
     }
 

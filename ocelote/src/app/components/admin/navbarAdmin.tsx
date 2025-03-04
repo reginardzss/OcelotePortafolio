@@ -7,7 +7,7 @@ const NavbarAdmin: React.FC = () => {
   return (
     <nav className="sticky top-0 z-10 bg-black">
       <div className="flex w-screen h-16 items-center p-8">
-        <Link href="/">
+        <Link href="/pages/admin/content/dashboard">
           <Image
             src="/logo/ocelote-logo-blanco4x.png"
             height={30}
@@ -19,7 +19,7 @@ const NavbarAdmin: React.FC = () => {
         <div className="w-full flex flex-row-reverse">
           <ul className="flex flex-row text-white">
             <li className="px-4">
-              <Link href="/">UPLOAD</Link>
+                <Link href="/pages/admin/content/upload">UPLOAD</Link>
             </li>
             <li className="px-4">
               <Link href="/pages/projects">PROJECTS</Link>
