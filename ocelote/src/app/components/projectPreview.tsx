@@ -25,7 +25,7 @@ const ProjectPreview: React.FC<Props> = ({ project }) => {
         />
       </div>
       <div className="font-medium text-center text-lg">
-        <div className="text-white">{project.project_name} - {project.client.client_name }</div>
+        <div className="text-white">{project.project_name} - {project.client?.client_name }</div>
         <div className="text-gray-300">{year}</div>
       </div>
       </Link>

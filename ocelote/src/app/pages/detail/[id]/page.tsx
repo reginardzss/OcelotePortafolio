@@ -15,14 +15,25 @@ export default function ProjectDetail() {
     const fetchProject = async () => {
       const { data, error } = await supabase
         .from("project")
-        .select("id, project_name")
+        .select(`
+          id, 
+          project_name,
+          project_type,
+          delivery_date,
+          created,
+          client_name,
+          client:client_id(client_name)`)
         .eq("id", id)
         .single();
 
       if (error) {
         console.error("❌ Error fetching project:", error);
       } else {
-        setProject(data); // Actualizar el estado
+        setProject({
+        ...data,
+        client: data.client && data.client.length > 0 ? data.client[0].client_name : "Sin cliente"
+      });
+
       }
     };
 
@@ -30,14 +41,14 @@ export default function ProjectDetail() {
     const fetchAssets = async () => {
       const { data, error } = await supabase
         .from("assets")
-        .select("id, url_media, media_type")
+        .select("id, url_media, media_type, created_at, project_id, media_use")
         .eq("project_id", id)
         .eq("media_use", "media"); // Filtrar solo assets de contenido
 
       if (error) {
         console.error("❌ Error fetching assets:", error);
       } else {
-        setMediaAssets(data);
+        setMediaAssets(data as Asset[]);
       }
     };
 
