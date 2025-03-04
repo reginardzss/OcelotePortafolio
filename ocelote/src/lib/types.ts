@@ -13,8 +13,8 @@ export type Project = {
   project_type: string;
   created: string;
   delivery_date: string;
-  client_name?: string; // Propiedad opcional
-  client?: { client_name: string } | null; 
+  client_name?: string;
+  client?: { client_name: string } | null; // Relación con los clientes
   image_url?: string;
-  assets?: Asset[]; // 🔹 Relación con los assets
+  assets?: Asset[]; // Relación con los assets
 };

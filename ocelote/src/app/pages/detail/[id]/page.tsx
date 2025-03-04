@@ -30,8 +30,8 @@ export default function ProjectDetail() {
         console.error("❌ Error fetching project:", error);
       } else {
         setProject({
-        ...data,
-        client: data.client && data.client.length > 0 ? data.client[0].client_name : "Sin cliente"
+        ...data, // Copiar los datos
+        client: data.client && data.client.length > 0 ? data.client[0].client_name : "Sin cliente" // Extraer el nombre del cliente
       });
 
       }
@@ -48,14 +48,14 @@ export default function ProjectDetail() {
       if (error) {
         console.error("❌ Error fetching assets:", error);
       } else {
-        setMediaAssets(data as Asset[]);
+        setMediaAssets(data as Asset[]); // Almacenar los assets
       }
     };
 
     // Ejecutar las funciones
     if (id) {
-      fetchProject();
-      fetchAssets();
+      fetchProject(); // Obtener el proyecto
+      fetchAssets(); // Obtener los assets
     }
   }, [id]); // Ejecutar solo al cargar el componente
 
