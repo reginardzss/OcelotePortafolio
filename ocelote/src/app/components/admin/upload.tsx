@@ -1,32 +1,184 @@
 "use client";
-import { useState } from "react";
 
-export default function UploadComponent() {
-  const [file, setFile] = useState<File | null>(null);
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
+import { uploadFileToS3} from "@/lib/awsUpload"; // Función para subir a S3
+import { Asset} from "@/lib/types";
+import Dropzone from "react-dropzone";
+import ProgressBar from "../Progressbar";
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setFile(e.target.files[0]);
+export default function Upload() {
+  const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [clients, setClients] = useState<{ id: number; client_name: string }[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [projectData, setProjectData] = useState({
+    project_name: "",
+    project_type: "",
+    delivery_date: "",
+    client_name: "",
+    isNewClient: false,
+});
+  const [assets, setAssets] = useState<Asset[]>([]);
+  const [cover, setCover] = useState<File | null>(null);
+  const [uploadedProject, setUploadedProject] = useState(null);
+
+  //Cargar clientes
+  useEffect(() => {
+    const fetchClients = async () => {
+      const { data, error } = await supabase.from("client").select("id, client_name");
+      if (error) console.error("Error fetching clients", error);
+      if(!error) setClients(data || []);  
+    };
+    fetchClients();
+  }, []);
+
+  //Funcion para manejar la carga de archivos
+  const handleDrop = (acceptedFiles: File[], isCover = false) => {
+    if (isCover){
+      setCover(acceptedFiles[0]);
+    } else {
+      setAssets((prev) => [...prev, ...acceptedFiles.map((file) => ({ file, media_use: "media" }))]);
     }
   };
 
   const handleUpload = async () => {
-    if (!file) {
-      alert("Selecciona un archivo primero.");
-      return;
+    setLoading(true);
+    setProgress(0);
+    try{
+      let client_id = null;
+      //Subir si el cliente es nuevo
+      if (projectData.isNewClient){
+        const {data, error} = await supabase.from("client").insert({
+          client_name: projectData.client_name,
+        }).select("id").single();
+          if (error) throw error;
+          client_id = data.id; //  Se asigna el id del cliente nuevo
+      } else {
+        const selectedClient = clients.find((client) => client.client_name === projectData.client_name);
+        client_id = selectedClient?.id || null; // Se asigna el id del cliente existente
+      }
+      //Insertar proyecto en Supabase
+      const { data: project, error: projectError} = await supabase.from("project").insert({
+        project_name: projectData.project_name,
+        project_type: projectData.project_type,
+        delivery_date: projectData.delivery_date,
+        client_id,
+      }).select("id").single();
+      if (projectError) throw projectError;
+
+      const project_id = project.id; // Se asigna el id del proyecto
+      const uploadedAssets = []; // Se almacenan los assets subidos
+      
+      //Subir portada
+      if(cover) {
+        const coverUrl = await uploadFileToS3(cover, `cover/${cover.name}`);
+        uploadedAssets.push ({
+          url_media: coverUrl, 
+          media_type: "photo", 
+          media_use: "cover", 
+          project_id});
+      }
+      
+      for (const asset of assets){
+        if (!asset.file) continue; // 🔹 Evita el error si file es undefined
+        const url = await uploadFileToS3(asset.file, `projects/${project_id}/${asset.file.name}`); // Agrega el id del proyecto al path
+        uploadedAssets.push({
+          url_media: url, 
+          media_type: asset.file.type.includes("video") ? "video" : "photo", 
+          media_use: "media", 
+          project_id,
+        });
+        setProgress((prev) => prev + 100 / assets.length);
+      }
+
+      await supabase.from("assets").insert(uploadedAssets); // Inserta los assets en la BD
+      setUploadedProject(project_id); // Almacena el id del proyecto subido
+      setStep(4); // Cambia el paso a 4
+
+    } catch (error){
+      console.error("Error uploading project", error);
     }
+    setLoading(false);
+    };
 
-    // Aquí iría la lógica para subir el archivo a Supabase o AWS S3
-    alert(`Archivo seleccionado: ${file.name}`);
-  };
+    return(
+      <div className="p-6 bg-gray-900 rounded-lg w-full max-w-3xl mx-auto">
+      {step === 1 && (
+        <div className="flex flex-col">
+          <h2 className="text-xl font-bold">Datos del Proyecto</h2>
+          <input type="text" placeholder="Project Name" value={projectData.project_name} onChange={(e) => setProjectData({ ...projectData, project_name: e.target.value })} />
+          <select value={projectData.project_type} onChange={(e) => setProjectData({ ...projectData, project_type: e.target.value })}>
+            <option value="comercial">Comercial</option>
+            <option value="films">Films</option>
+            <option value="photo">Photo</option>
+          </select>
+          <input type="date" value={projectData.delivery_date} onChange={(e) => setProjectData({ ...projectData, delivery_date: e.target.value })} />
+          <input type="text" placeholder="Buscar cliente..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+          <select onChange={(e) => setProjectData({ ...projectData, client_name: e.target.value })}>
+            <option value="">Seleccionar Cliente</option>
+            {clients.filter(client => client.client_name.toLowerCase().includes(searchTerm.toLowerCase())).map(client => (
+              <option key={client.id} value={client.client_name}>{client.client_name}</option>
+            ))}
+          </select>
+          <input 
+          type="checkbox" 
+          className="flex flex-row"
+          onChange={() => setProjectData({ ...projectData, isNewClient: !projectData.isNewClient })} /> Es un cliente nuevo
+          {projectData.isNewClient && <input type="text" placeholder="Nuevo Cliente" value={projectData.client_name} onChange={(e) => setProjectData({ ...projectData, client_name: e.target.value })} />}
+          <button onClick={() => setStep(2)}>Next</button>
+        </div>
+      )}
 
-  return (
-    <div className="p-6 bg-gray-800 rounded-lg">
-      <h2 className="text-2xl font-bold text-white">Subir Proyecto</h2>
-      <input type="file" onChange={handleFileChange} className="mt-4 p-2 bg-gray-700 text-white rounded" />
-      <button onClick={handleUpload} className="mt-4 px-4 py-2 bg-blue-600 text-white rounded">
-        Subir Archivo
-      </button>
+      {step === 2 && (
+        <div>
+          <h2 className="text-xl font-bold text-white">Carga de Assets</h2>
+          <Dropzone onDrop={(files) => handleDrop(files, true)}>
+            {({ getRootProps, getInputProps }) => (
+              <div {...getRootProps()} className="border p-4 text-center text-white cursor-pointer">
+                <input {...getInputProps()} />
+                <p>Sube la portada o arrastra aquí</p>
+              </div>
+            )}
+          </Dropzone>
+          {cover && <p className="text-white">Portada subida: {cover.name}</p>}
+          <Dropzone onDrop={(files) => handleDrop(files)}>
+            {({ getRootProps, getInputProps }) => (
+              <div {...getRootProps()} className="border p-4 text-center text-white cursor-pointer">
+                <input {...getInputProps()} />
+                <p>Sube más imágenes o arrastra aquí</p>
+              </div>
+            )}
+          </Dropzone>
+          {assets.map((asset, index) => (
+            <p key={index} className="text-white">Imagen subida: {asset.file?.name}</p>
+          ))}
+          <button onClick={() => setStep(3)}>Next</button>
+        </div>
+      )}
+      {loading && <ProgressBar progress={progress} />}
+      {step === 3 && (
+        <div>
+          <h2 className="text-xl font-bold text-white">Vista previa</h2>
+          <p>📌 Nombre: {projectData.project_name}</p>
+          <p>🎬 Tipo: {projectData.project_type}</p>
+          <p>📅 Entrega: {projectData.delivery_date}</p>
+          <p>👤 Cliente: {projectData.client_name}</p>
+          <p>📂 Imágenes subidas: {assets.length}</p>
+          <button onClick={handleUpload}>Publicar</button>
+        </div>
+      )}
+
+      {step === 4 && (
+        <div>
+          <h2 className="text-xl font-bold text-green-500">¡Éxito!</h2>
+          <p>Tu proyecto ha sido subido.</p>
+        </div>
+      )}
+
+      {loading && <ProgressBar progress={progress} />}
     </div>
-  );
+    );
+      
 }

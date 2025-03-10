@@ -1,3 +1,5 @@
+//ocelote/src/app/pages/detail/[id]/page.tsx
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -21,7 +23,6 @@ export default function ProjectDetail() {
           project_type,
           delivery_date,
           created,
-          client_name,
           client:client_id(client_name)`)
         .eq("id", id)
         .single();
