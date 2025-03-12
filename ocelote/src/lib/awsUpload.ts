@@ -1,24 +1,30 @@
-import AWS from "aws-sdk";
-
-//Credenciales AWS  
-const s3 = new AWS.S3({
-    accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY,
-    region: process.env.NEXT_PUBLIC_AWS_REGION,
-
-});
-
 //Funcion para subir archivos a S3
-export async function uploadFileToS3(file:File, path: string): Promise<string> {
-    const params = {
-        Bucket: process.env.NEXT_PUBLIC_AWS_BUCKET_NAME!,
-        Key: path,
-        Body: file,
-        ContentType: file.type,    };
+export async function uploadFileToS3(file:File, folder: string): Promise<string> {
     try{
-        const result = await s3.upload(params).promise();
-        const fileUrl = `https://${process.env.NEXT_PUBLIC_AWS_BUCKET_NAME}.s3.${process.env.NEXT_PUBLIC_AWS_REGION}.amazonaws.com/${path}`;
-        return fileUrl;
+        //Pedir la url pre-firmada desde la API
+        const response = await fetch("/api/upload", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                fileName: file.name,
+                fileType: file.type,
+                folder,
+            }),
+        });
+        const data = await response.json();
+        if(!response.ok) throw new Error(data.error || "Error generating upload URL");
+
+        //Subir el archivo a s3 usando la url pre-firmada
+        const uploadResponse = await fetch(data.uploadUrl, {
+            method: "PUT",
+            body: file,
+            headers: {"Content-Type": file.type},
+        });
+
+        if(!uploadResponse.ok) throw new Error ("Error uploading file to s3");
+
+        console.log("Archivo subido correctamente:", data.fileURL);
+        return data.fileURL; //url en s3
 
     } catch (error) {
         console.error("Error uploading to S3", error);

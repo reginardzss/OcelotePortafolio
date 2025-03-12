@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { uploadFileToS3} from "@/lib/awsUpload"; // Función para subir a S3
+//import { uploadFileToS3} from "@/lib/awsUpload"; // Función para subir a S3
 import { Asset} from "@/lib/types";
 import Dropzone from "react-dropzone";
 import ProgressBar from "../Progressbar";
@@ -43,6 +43,35 @@ export default function Upload() {
     }
   };
 
+  const uploadFile = async (file: File, folder:string) => {
+    try{
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          filename: file.name,
+          fileType: file.type,
+          folder,
+        }),
+      });
+      if (!res.ok) throw new Error("error al obtener URL firmada");
+      const {uploadUrl, fileUrl} = await res.json();
+      
+      const uploadRes = await fetch(uploadUrl, {
+        method: "PUT",
+        body: file,
+        headers: {"Content-Type": file.type},
+      });
+
+      if(!uploadRes.ok) throw new Error("Error al subir archivo a S3");
+
+      return fileUrl;
+    } catch (error){
+      console.error("error en la subida a s3:", error);
+      return null;
+    }
+  };
+
   const handleUpload = async () => {
     setLoading(true);
     setProgress(0);
@@ -73,24 +102,48 @@ export default function Upload() {
       
       //Subir portada
       if(cover) {
-        const coverUrl = await uploadFileToS3(cover, `cover/${cover.name}`);
-        uploadedAssets.push ({
-          url_media: coverUrl, 
-          media_type: "photo", 
-          media_use: "cover", 
-          project_id});
+        const fileUrl = await uploadFile(cover, "cover");
+        if (fileUrl){
+          uploadedAssets.push ({
+            url_media: fileUrl, 
+            media_type: "photo", 
+            media_use: "cover", 
+            project_id
+          });
+        }
       }
+        /*const {uploadUrl, fileUrl} = await fetch("/api/upload", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            fileName: cover.name, 
+            fileType: cover.type, 
+            folder:"cover"}),
+        }).then(res => res.json());
+        await fetch(uploadUrl, {method:"PUT", body: cover});*/
+
+        
       
       for (const asset of assets){
         if (!asset.file) continue; // 🔹 Evita el error si file es undefined
-        const url = await uploadFileToS3(asset.file, `projects/${project_id}/${asset.file.name}`); // Agrega el id del proyecto al path
-        uploadedAssets.push({
-          url_media: url, 
-          media_type: asset.file.type.includes("video") ? "video" : "photo", 
-          media_use: "media", 
-          project_id,
-        });
+        const fileUrl = await uploadFile(asset.file, `projects/${project_id}`); // Agrega el id del proyecto al path
+        if (fileUrl){
+          uploadedAssets.push({
+            url_media: fileUrl, 
+            media_type: asset.file.type.includes("video") ? "video" : "photo", 
+            media_use: "media", 
+            project_id,
+          });
+        }
         setProgress((prev) => prev + 100 / assets.length);
+
+        /*const {uploadUrl, fileUrl} = await fetch("/api/upload", {
+          method: "POST",
+          body: JSON.stringify({fileName: asset.file.name, fileType: asset.file.type, folder: `projects/${project_id}`}),
+        }).then(res => res.json());*/
+
+        //await fetch(uploadUrl, {method:"PUT", body: asset.file});
+        
       }
 
       await supabase.from("assets").insert(uploadedAssets); // Inserta los assets en la BD
