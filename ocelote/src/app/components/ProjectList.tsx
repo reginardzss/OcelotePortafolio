@@ -2,7 +2,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase/client";
+
 import { Project, Asset } from "@/lib/types";
 import ProjectPreview from "./projectPreview";
 

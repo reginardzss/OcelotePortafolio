@@ -1,7 +1,7 @@
 "use client"; // Solo si es necesario
 import React from "react";
-import Navbar from "./components/navbar";
 import Home from "./pages/home/page";
+
 
 const App: React.FC = () => {
   return (
