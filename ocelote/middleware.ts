@@ -1,4 +1,6 @@
-import { type NextRequest } from 'next/server'
+//Este archivo se encarga de llamar al middleware de Supabase para actualizar la sesión en cada request.
+
+import { type NextRequest, NextResponse } from 'next/server'
 import { updateSession } from '@/lib/supabase/middleware'
 
 export async function middleware(request: NextRequest) {

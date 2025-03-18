@@ -33,18 +33,17 @@ export async function updateSession(request: NextRequest) {
 
   // IMPORTANT: DO NOT REMOVE auth.getUser()
 
+  //Obtiene la sesión del usuario
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
-  if (
-    !user &&
-    !request.nextUrl.pathname.startsWith('/login') &&
-    !request.nextUrl.pathname.startsWith('/auth')
-  ) {
-    // no user, potentially respond by redirecting the user to the login page
+  const isAuthRoute = request.nextUrl.pathname.startsWith("pages/admin/login") || request.nextUrl.pathname.startsWith("pages/admin/register")
+
+  if (!user && !isAuthRoute) {
+    // Si no hay usuario autenticado y no está en login/register, redirige
     const url = request.nextUrl.clone()
-    url.pathname = '/login'
+    url.pathname = '/pages/admin/login'
     return NextResponse.redirect(url)
   }
 

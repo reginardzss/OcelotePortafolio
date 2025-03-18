@@ -18,17 +18,21 @@ export default function Login() {
         setError(""); //Limpiar mensajes de error
 
         //Iniciar sesión con Supabase Auth
-        const {error} = await supabase.auth.signInWithPassword({
-            email,
-            password,
+        const res = await fetch("/api/auth/login", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({email, password}),
         });
 
-        //Si hay un error, mostrarlo y detener la ejecución
-        if(error) {
-            setError(error.message);
-        } else {
-            router.push("/pages/admin/dashboard"); //Redirige al dashboard de admin
+        const data = await res.json();
+        
+        if (!res.ok){
+            setError(data.error);
+            setLoading(false);
+            return;
         }
+        
+        router.push("/pages/admin/dashboard"); //Redirige al dashboard de admin
     }
 
     return (
@@ -75,7 +79,7 @@ export default function Login() {
                     <div className="flex items-center justify-between">
                         <div className="flex items-start">
                             <div className="flex items-center h-5">
-                                <input id="remember" aria-describedby="remember" type="checkbox" className="w-4 h-4 border rounded focus:ring-3 focus:ring-primary-300 bg-zinc-700 border-zinc-600 dark:focus:ring-primary-600 ring-offset-zinc-800" required />
+                                <input id="remember" aria-describedby="remember" type="checkbox" className="w-4 h-4 border rounded focus:ring-3 focus:ring-primary-300 bg-zinc-700 border-zinc-600 dark:focus:ring-primary-600 ring-offset-zinc-800" />
                             </div>
                             <div className="ml-3 text-sm">
                                 <label htmlFor="remember" className="text-gray-500 dark:text-gray-300">Remember me</label>
