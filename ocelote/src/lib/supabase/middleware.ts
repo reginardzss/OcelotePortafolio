@@ -1,64 +1,27 @@
-import { createServerClient } from '@supabase/ssr'
-import { NextResponse, type NextRequest } from 'next/server'
+//ocelote/src/lib/supabase/middleware.ts
+import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
+import { NextResponse, type NextRequest } from "next/server";
 
 export async function updateSession(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({
-    request,
-  })
+  console.log("🛠 Middleware ejecutándose en:", request.nextUrl.pathname);
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll()
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
-          supabaseResponse = NextResponse.next({
-            request,
-          })
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          )
-        },
-      },
-    }
-  )
+  let response = NextResponse.next(); // Respuesta base
 
-  // Do not run code between createServerClient and
-  // supabase.auth.getUser(). A simple mistake could make it very hard to debug
-  // issues with users being randomly logged out.
+  const supabase = createMiddlewareClient({
+    req: request,
+    res: response,
+  });
 
-  // IMPORTANT: DO NOT REMOVE auth.getUser()
+  const { data: { user } } = await supabase.auth.getUser();
+  console.log("👤 Usuario detectado:", user);
 
-  //Obtiene la sesión del usuario
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const isAuthRoute = request.nextUrl.pathname.startsWith("pages/admin/login") || request.nextUrl.pathname.startsWith("pages/admin/register")
+  const isAuthRoute = request.nextUrl.pathname.startsWith("/pages/admin/login") || request.nextUrl.pathname.startsWith("/pages/admin/register");
 
   if (!user && !isAuthRoute) {
-    // Si no hay usuario autenticado y no está en login/register, redirige
-    const url = request.nextUrl.clone()
-    url.pathname = '/pages/admin/login'
-    return NextResponse.redirect(url)
+    const url = request.nextUrl.clone();
+    url.pathname = "/pages/admin/login";
+    return NextResponse.redirect(url);
   }
 
-  // IMPORTANT: You *must* return the supabaseResponse object as it is.
-  // If you're creating a new response object with NextResponse.next() make sure to:
-  // 1. Pass the request in it, like so:
-  //    const myNewResponse = NextResponse.next({ request })
-  // 2. Copy over the cookies, like so:
-  //    myNewResponse.cookies.setAll(supabaseResponse.cookies.getAll())
-  // 3. Change the myNewResponse object to fit your needs, but avoid changing
-  //    the cookies!
-  // 4. Finally:
-  //    return myNewResponse
-  // If this is not done, you may be causing the browser and server to go out
-  // of sync and terminate the user's session prematurely!
-
-  return supabaseResponse
+  return response; // Retornar la respuesta con la sesión actualizada
 }

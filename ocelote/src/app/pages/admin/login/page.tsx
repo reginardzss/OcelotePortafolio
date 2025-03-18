@@ -1,11 +1,12 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
-import { supabase } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 export default function Login() {
     const router = useRouter(); //Obtener el router
+    const supabase = createClientComponentClient(); //Crear cliente de Supabase Auth
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
@@ -18,22 +19,18 @@ export default function Login() {
         setError(""); //Limpiar mensajes de error
 
         //Iniciar sesión con Supabase Auth
-        const res = await fetch("/api/auth/login", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({email, password}),
+        const { error } = await supabase.auth.signInWithPassword({
+            email,
+            password,
         });
 
-        const data = await res.json();
-        
-        if (!res.ok){
-            setError(data.error);
-            setLoading(false);
-            return;
+        if (error) {
+            setError(error.message);
+        } else {
+            router.push("/pages/admin/dashboard");
         }
-        
-        router.push("/pages/admin/dashboard"); //Redirige al dashboard de admin
-    }
+    };
+
 
     return (
     <section>
