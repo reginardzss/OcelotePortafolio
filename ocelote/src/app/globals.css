@@ -27,3 +27,7 @@ body {
 a {
   @apply hover:text-oceloteRed;
 }
+
+input {
+  color: black;
+}

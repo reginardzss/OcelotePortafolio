@@ -19,7 +19,7 @@ const NavbarAdmin: React.FC = () => {
         <div className="w-full flex flex-row-reverse">
           <ul className="flex flex-row text-white">
             <li className="px-4">
-                <Link href="/pages/admin/content/upload">UPLOAD</Link>
+                <Link href="/pages/admin/upload">UPLOAD</Link>
             </li>
             <li className="px-4">
               <Link href="/pages/projects">PROJECTS</Link>

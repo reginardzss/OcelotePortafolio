@@ -1,12 +1,13 @@
+//ocelote/src/app/pages/admin/login/page.tsx
+
 "use client";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { supabase } from "@/lib/supabase/client";
 
 export default function Login() {
     const router = useRouter(); //Obtener el router
-    const supabase = createClientComponentClient(); //Crear cliente de Supabase Auth
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);

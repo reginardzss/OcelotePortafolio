@@ -18,6 +18,7 @@ export async function updateSession(request: NextRequest) {
   const isAuthRoute = request.nextUrl.pathname.startsWith("/pages/admin/login") || request.nextUrl.pathname.startsWith("/pages/admin/register");
 
   if (!user && !isAuthRoute) {
+    console.log("🔴 Usuario no autenticado, redirigiendo a login...");
     const url = request.nextUrl.clone();
     url.pathname = "/pages/admin/login";
     return NextResponse.redirect(url);
