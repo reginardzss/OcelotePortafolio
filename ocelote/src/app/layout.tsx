@@ -1,17 +1,7 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Work_Sans } from "next/font/google";
+import {Work_Sans } from "next/font/google";
 import "./globals.css";
 import LayoutWrapper from "./components/LayoutWrapper";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 const workSans = Work_Sans({
   variable: "--font-work-sans",
@@ -31,7 +21,7 @@ export default function RootLayout({
   return (
     <html lang="es-mx">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${workSans.variable} antialiased`}
+        className={` ${workSans.variable} antialiased`}
       >
         <LayoutWrapper>{children}</LayoutWrapper>
       </body>

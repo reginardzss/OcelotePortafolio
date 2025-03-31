@@ -3,7 +3,7 @@ import Image from "next/image";
 
 const Navbar: React.FC = () => {
   return (
-    <nav className="sticky top-0 z-10 bg-black">
+    <nav className="fixed top-0 z-10 ">
       <div className="flex w-screen h-16 items-center p-8">
         <Link href="/">
           <Image

@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
+  --background: #161616;
   --foreground: #171717;
   --font-geist-sans: 'Geist', sans-serif;
   --font-geist-mono: 'Geist Mono', monospace;
@@ -13,15 +13,118 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
-    --foreground: #ededed;
+    --foreground: #161616;
   }
 }
 
-body {
-  color: white;
-  background: var(--background);
-  font-family: var(--font-work-sans), Arial, Helvetica, sans-serif;
+@font-face {
+  font-family: 'Pragmatica';
+  src: url('/fonts/Pragmatica/Pragmatica-Extended-Extra-Light.woff2') format('woff2');
+  font-weight: 200;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Pragmatica';
+  src: url('/fonts/Pragmatica/Pragmatica-Extended-Extra-Light-Oblique.woff2') format('woff2');
+  font-weight: 200;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Pragmatica';
+  src: url('/fonts/Pragmatica/Pragmatica-Extended-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Pragmatica';
+  src: url('/fonts/Pragmatica/Pragmatica-Extended-Light-Oblique.woff2') format('woff2');
+  font-weight: 300;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Pragmatica';
+  src: url('/fonts/Pragmatica/Pragmatica-Extended-Book.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Pragmatica';
+  src: url('/fonts/Pragmatica/Pragmatica-Extended-Book-Oblique.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Pragmatica';
+  src: url('/fonts/Pragmatica/Pragmatica-Extended-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Pragmatica';
+  src: url('/fonts/Pragmatica/Pragmatica-Extended-Medium-Oblique.woff2') format('woff2');
+  font-weight: 500;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Pragmatica';
+  src: url('/fonts/Pragmatica/Pragmatica-Extended-Bold.woff2') format('woff2');
   font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Pragmatica';
+  src: url('/fonts/Pragmatica/Pragmatica-Extended-Bold-Oblique.woff2') format('woff2');
+  font-weight: 700;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Pragmatica';
+  src: url('/fonts/Pragmatica/Pragmatica-Extended-Extra-Bold.woff2') format('woff2');
+  font-weight: 800;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Pragmatica';
+  src: url('/fonts/Pragmatica/Pragmatica-Extended-Extra-Bold-Oblique.woff2') format('woff2');
+  font-weight: 800;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Pragmatica';
+  src: url('/fonts/Pragmatica/Pragmatica-Extended-Black.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Pragmatica';
+  src: url('/fonts/Pragmatica/Pragmatica-Extended-Black-Oblique.woff2') format('woff2');
+  font-weight: 900;
+  font-style: italic;
+}
+
+* {
+  font-family: 'Pragmatica', var(--font-work-sans), Helvetica, Arial, sans-serif;
+  font-weight: 700;
+  color: white;
+}
+
+
+
+body {
+  background: var(--background);
 }
 
 a {
