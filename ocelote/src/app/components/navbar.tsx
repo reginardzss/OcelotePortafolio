@@ -1,35 +1,68 @@
-import Link from "next/link";
-import Image from "next/image";
+'use client'
 
-const Navbar: React.FC = () => {
+import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
+import Link from 'next/link'
+import Image from 'next/image'
+
+const navigation = [
+  { name: 'Inicio', href: '/' },
+  { name: 'Proyectos', href: '/pages/projects' },
+  { name: 'Nosotros', href: '/about' },
+  { name: 'Contacto', href: '/contact' },
+]
+
+function classNames(...classes: string[]) {
+  return classes.filter(Boolean).join(' ')
+}
+
+export default function Navbar() {
   return (
-    <nav className="fixed top-0 z-10 ">
-      <div className="flex w-screen h-16 items-center p-8">
-        <Link href="/">
+    <Disclosure as="nav" className="w-full fixed top-0 z-10 bg-black md:bg-transparent lg:bg-transparent px-4 py-3">
+      <div className="mx-auto max-w-7xl flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-2">
           <Image
             src="/logo/ocelote-logo-blanco4x.png"
-            height={30}
+            height={36}
             width={300}
             alt="Ocelote Logo"
           />
         </Link>
-        
-        <div className="w-full flex flex-row-reverse">
-          <ul className="flex flex-row text-white">
-            <li className="px-4">
-              <Link href="/">ABOUT US</Link>
-            </li>
-            <li className="px-4">
-              <Link href="/pages/projects">PROJECTS</Link>
-            </li>
-            <li className="px-4">
-              <Link href="/">CONTACT US</Link>
-            </li>
-          </ul>
+
+        {/* Desktop Nav */}
+        <div className="hidden sm:flex space-x-6">
+          {navigation.map((item) => (
+            <Link
+              key={item.name}
+              href={item.href}
+              className="text-sm lg:text-lg"
+            >
+              {item.name}
+            </Link>
+          ))}
+        </div>
+
+        {/* Mobile menu button */}
+        <div className="sm:hidden">
+          <DisclosureButton className=" hover:text-oceloteRed focus:outline-none">
+            <Bars3Icon className="h-6 w-6" />
+          </DisclosureButton>
         </div>
       </div>
-    </nav>
-  );
-};
 
-export default Navbar;
+      {/* Mobile Menu */}
+      <DisclosurePanel className="sm:hidden mt-3 space-y-2">
+        {navigation.map((item) => (
+          <DisclosureButton
+            key={item.name}
+            as={Link}
+            href={item.href}
+            className="block text-base hover:underline px-2"
+          >
+            {item.name}
+          </DisclosureButton>
+        ))}
+      </DisclosurePanel>
+    </Disclosure>
+  )
+}
