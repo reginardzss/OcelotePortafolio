@@ -134,3 +134,16 @@ a {
 input {
   color: black;
 }
+
+@keyframes scrollVertical {
+  0% {
+    transform: translateY(0%);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+.animate-slide-scroll {
+  animation: scrollVertical 60s linear infinite;
+}
