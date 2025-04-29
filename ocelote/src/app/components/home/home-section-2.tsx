@@ -9,6 +9,7 @@ const HomeCarousel = () => {
   const [isVisible, setIsVisible] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Simula la carga desde AWS (reemplaza esto con tu fetch real)
   useEffect(() => {
@@ -25,54 +26,65 @@ const HomeCarousel = () => {
     fetchImages();
   }, []);
 
-  // Detectar visibilidad
+  // Visibilidad
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         setIsVisible(entry.isIntersecting);
       },
-      {
-        threshold: 0.5,
-      }
+      { threshold: 0.5 }
     );
 
     if (carouselRef.current) observer.observe(carouselRef.current);
-
     return () => {
       if (carouselRef.current) observer.unobserve(carouselRef.current);
     };
   }, []);
 
-  // Cambiar imágenes automáticamente
+  // Reproduce automáticamente si visible
   useEffect(() => {
     if (isVisible && images.length > 0) {
-      intervalRef.current = setInterval(() => {
-        setCurrentIndex((prev) => (prev + 1) % images.length);
-      }, 3000);
+      startAutoPlay();
     }
-
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
+    return () => stopAutoPlay();
   }, [isVisible, images]);
 
-  const goToPrevious = () => {
+  const startAutoPlay = () => {
+    stopAutoPlay();
+    intervalRef.current = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % images.length);
+    }, 3000);
+  };
+
+  const stopAutoPlay = () => {
     if (intervalRef.current) clearInterval(intervalRef.current);
+  };
+
+  const restartAutoPlayLater = () => {
+    stopAutoPlay();
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => {
+      startAutoPlay();
+    }, 2000); // 5 segundos de inactividad
+  };
+
+  const goToPrevious = () => {
     setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
+    restartAutoPlayLater();
   };
 
   const goToNext = () => {
-    if (intervalRef.current) clearInterval(intervalRef.current);
     setCurrentIndex((prev) => (prev + 1) % images.length);
+    restartAutoPlayLater();
   };
 
   const goToIndex = (index: number) => {
-    if (intervalRef.current) clearInterval(intervalRef.current);
     setCurrentIndex(index);
+    restartAutoPlayLater();
   };
 
   return (
-    <div ref={carouselRef} className="w-full h-[500px] flex flex-col items-center justify-center relative overflow-hidden bg-[#E0E0E0] p-4">
+    <div ref={carouselRef} className="w-full h-[500px] flex flex-col items-center justify-center relative overflow-hidden bg-[#E0E0E0] p-8">
       <div className="w-full h-full relative">
         {images.map((src, index) => (
           <div
@@ -91,7 +103,7 @@ const HomeCarousel = () => {
             />
           </div>
         ))}
-        {/* Controles de navegación */}
+        {/* Botones */}
         <button
           onClick={goToPrevious}
           className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/40 text-white p-2 rounded-full"
@@ -105,8 +117,8 @@ const HomeCarousel = () => {
           ›
         </button>
       </div>
-      
-      {/* Puntitos abajo */}
+
+      {/* Puntitos */}
       <div className="flex space-x-2 mt-4">
         {images.map((_, index) => (
           <button
