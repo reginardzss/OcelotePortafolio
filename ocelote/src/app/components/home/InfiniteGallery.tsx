@@ -1,3 +1,5 @@
+//ocelote/src/app/components/home/InfiniteGallery.tsx 
+
 'use client'
 
 import { useEffect, useState } from 'react';
@@ -11,18 +13,35 @@ type Asset = {
 
 const InfiniteGallery = () => {
   const [photos, setPhotos] = useState<Asset[]>([]);
+  const [loading, setLoading] = useState(true);
+
 
   useEffect(() => {
     const fetchPhotos = async () => {
       try {
         const res = await fetch('/api/assets?media_type=photo');
         const data = await res.json();
-
         // Mezclar las imágenes para que no estén juntas las del mismo proyecto
         const shuffled = data.sort(() => 0.5 - Math.random());
+
         setPhotos(shuffled);
+
+        //Preload de imagenes
+        const preloadImages = shuffled.map((photo: { url_media: any; }) => {
+          return new Promise<void>((resolve) =>{
+            const img = document.createElement('img');
+            img.src = photo.url_media;
+            img.onload = () => resolve();
+            img.onerror = () => resolve();
+          });
+        });
+
+        await Promise.all(preloadImages);
+        setLoading(false);
+
       } catch (error) {
         console.error('Error fetching photos:', error);
+        setLoading(false);
       }
     };
 
