@@ -2,22 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-
-function useIsMobile() {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkScreen = () => {
-      setIsMobile(window.innerWidth < 768); // md breakpoint
-    };
-    checkScreen();
-    window.addEventListener('resize', checkScreen);
-    return () => window.removeEventListener('resize', checkScreen);
-  }, []);
-
-  return isMobile;
-}
-
+import useIsMobile from "@/app/hooks/useIsMobile"; // Importa el hook desde la nueva ubicación
 
 export default function HomeSectionTwo() {
   const [images, setImages] = useState<string[]>([]);
