@@ -3,28 +3,54 @@
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 
-const HomeCarousel = () => {
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkScreen = () => {
+      setIsMobile(window.innerWidth < 768); // md breakpoint
+    };
+    checkScreen();
+    window.addEventListener('resize', checkScreen);
+    return () => window.removeEventListener('resize', checkScreen);
+  }, []);
+
+  return isMobile;
+}
+
+
+export default function HomeSectionTwo() {
   const [images, setImages] = useState<string[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isMobile = useIsMobile();
+
+  
 
   // Simula la carga desde AWS (reemplaza esto con tu fetch real)
   useEffect(() => {
     const fetchImages = async () => {
-      const awsImages = [
-        'https://ocelote-archive.s3.us-east-2.amazonaws.com/wp-assets/hp-carousel-4.png',
-        'https://ocelote-archive.s3.us-east-2.amazonaws.com/wp-assets/hp-carousel-3.png',
-        'https://ocelote-archive.s3.us-east-2.amazonaws.com/wp-assets/hp-carousel-2.png',
-        'https://ocelote-archive.s3.us-east-2.amazonaws.com/wp-assets/hp-carousel-1.png',
+      const webImages = [
+        'https://ocelote-archive.s3.us-east-2.amazonaws.com/wp-assets/hp-carousel-1-WEB.png',
+        'https://ocelote-archive.s3.us-east-2.amazonaws.com/wp-assets/hp-carousel-2-WEB.png',
+        'https://ocelote-archive.s3.us-east-2.amazonaws.com/wp-assets/hp-carousel-3-WEB.png',
+        'https://ocelote-archive.s3.us-east-2.amazonaws.com/wp-assets/hp-carousel-4-WEB.png',
+        
       ];
-      setImages(awsImages);
+      const mobileImages = [
+        'https://ocelote-archive.s3.us-east-2.amazonaws.com/wp-assets/hp-carousel-1-MOVIL.png',
+        'https://ocelote-archive.s3.us-east-2.amazonaws.com/wp-assets/hp-carousel-2-MOVIL.png',
+        'https://ocelote-archive.s3.us-east-2.amazonaws.com/wp-assets/hp-carousel-3-MOVIL.png',
+        'https://ocelote-archive.s3.us-east-2.amazonaws.com/wp-assets/hp-carousel-4-MOVIL.png',
+      ];
+      setImages(isMobile ? mobileImages : webImages);
     };
 
     fetchImages();
-  }, []);
+  }, [isMobile]);
 
   // Visibilidad
   useEffect(() => {
@@ -83,6 +109,7 @@ const HomeCarousel = () => {
     restartAutoPlayLater();
   };
 
+
   return (
     <div ref={carouselRef} className="w-full h-[500px] flex flex-col items-center justify-center relative overflow-hidden bg-[#E0E0E0] p-8">
       <div className="w-full h-full relative">
@@ -119,7 +146,7 @@ const HomeCarousel = () => {
       </div>
 
       {/* Puntitos */}
-      <div className="flex space-x-2 mt-4">
+      <div className="flex space-x-2 mt-4 z-5">
         {images.map((_, index) => (
           <button
             key={index}
@@ -134,4 +161,4 @@ const HomeCarousel = () => {
   );
 };
 
-export default HomeCarousel;
+//export default HomeCarousel;

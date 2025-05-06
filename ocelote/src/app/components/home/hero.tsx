@@ -17,7 +17,7 @@ const Hero = () => {
           Your browser does not support the video tag.
         </video>
         {!videoLoaded && (
-            <div className="absolute inset-0 bg-black flex items-center justify-center z-10">
+            <div className="absolute inset-0 flex items-center justify-center z-10">
               <span className="animate-spin w-8 h-8 border-4 border-white border-t-transparent rounded-full"></span>
             </div>
           )}
