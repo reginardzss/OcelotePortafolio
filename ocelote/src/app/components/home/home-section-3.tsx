@@ -6,7 +6,7 @@ import useIsMobile from "@/app/hooks/useIsMobile";
 export default function HomeSectionThree() {
     const isMobile = useIsMobile();
     return(
-        <div className="bg-oceloteRed w-screen h-[70lvh] p-8 text-center overflow-hidden">
+        <div className="bg-oceloteRed w-screen h-auto p-8 text-center overflow-hidden">
             
                 {isMobile ? (
                     <div className='grid grid-rows-2 text-4xl'>
