@@ -43,7 +43,7 @@ export default function ProjectList() {
   
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-8">
+    <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3  gap-6 p-8">
       {projects.map((project) => (
         <ProjectPreview key={project.id} project={project} />
       ))}

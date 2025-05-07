@@ -96,7 +96,7 @@ export default function HomeSectionTwo() {
 
 
   return (
-    <div ref={carouselRef} className="w-full h-[500px] flex flex-col items-center justify-center relative overflow-hidden bg-[#E0E0E0] p-8">
+    <div ref={carouselRef} className="w-full h-[70lvh] flex flex-col items-center justify-center relative overflow-hidden bg-[#E0E0E0] p-8">
       <div className="w-full h-full relative">
         {images.map((src, index) => (
           <div

@@ -25,7 +25,7 @@ const Hero = () => {
  
         <div className="absolute w-screen h-[90lvh] md:h-screen bg-black opacity-50"></div>
         <div className="absolute w-screen h-[90lvh] md:h-screen flex items-center">
-        <div className="flex flex-col p-8 lg:p-10 text-4xl md:text-6xl lg:text-8xl  ">
+        <div className="flex flex-col p-8 lg:p-16  text-4xl md:text-6xl lg:text-8xl  ">
             <div className="text-oceloteRed">OCELOTE FILMS</div>
             <div>WHERE CREATIVITY <br /> MEETS FILMMAKING.</div>
           </div>

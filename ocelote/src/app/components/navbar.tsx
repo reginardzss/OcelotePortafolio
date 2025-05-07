@@ -6,8 +6,9 @@ import Link from 'next/link'
 import Image from 'next/image'
 
 const navigation = [
-  { name: 'Inicio', href: '/' },
-  { name: 'Proyectos', href: '/pages/projects' },
+  { name: 'Commercial', href: '/' },
+  { name: 'Film', href: '/' },
+  { name: 'Photo', href: '/pages/projects' },
   { name: 'Nosotros', href: '/about' },
   { name: 'Contacto', href: '/contact' },
 ]
@@ -18,8 +19,8 @@ function classNames(...classes: string[]) {
 
 export default function Navbar() {
   return (
-    <Disclosure as="nav" className="w-full fixed top-0 z-10 bg-black md:bg-transparent lg:bg-transparent px-4 py-3">
-      <div className="mx-auto max-w-7xl flex items-center justify-between">
+    <Disclosure as="nav" className="w-full fixed top-0 z-10 bg-black md:bg-transparent lg:bg-transparent px-4 md:px-8 py-3">
+      <div className="mx-auto max-w-10xl flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
           <Image
             src="/logo/ocelote-logo-blanco4x.png"
@@ -30,7 +31,7 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Nav */}
-        <div className="hidden sm:flex space-x-6">
+        <div className="hidden sm:flex space-x-8">
           {navigation.map((item) => (
             <Link
               key={item.name}
