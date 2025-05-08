@@ -3,24 +3,29 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
-
 import { Project, Asset } from "@/lib/types";
 import ProjectPreview from "./projectPreview";
 
-export default function ProjectList() {
+export default function ProjectList({ type }: { type?: string }) {
   const [projects, setProjects] = useState<Project[]>([]); // Estado para almacenar los proyectos
 
   useEffect(() => {
     const fetchProjects = async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from("project")
         .select(`id, 
           project_name, 
           project_type, 
-          created, delivery_date, 
+          created, 
+          delivery_date, 
           client:client_id(id, client_name),
           assets:assets(url_media, media_use)
-          `);
+        `);
+      
+        if (type) {
+          query = query.eq("project_type", type);
+        }
+        const { data, error } = await query;
       
       // Manejar errores
       if (error) {
@@ -39,7 +44,7 @@ export default function ProjectList() {
     };
   
     fetchProjects(); // Ejecutar la función
-  }, []);
+  }, [type]);
   
 
   return (

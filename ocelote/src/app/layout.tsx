@@ -1,3 +1,4 @@
+//ocelote/src/app/layout.tsx
 import type { Metadata } from "next";
 import {Work_Sans } from "next/font/google";
 import "./globals.css";

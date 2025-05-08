@@ -1,3 +1,4 @@
+//ocelote/src/app/components/navbar.tsx
 'use client'
 
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
@@ -6,12 +7,13 @@ import Link from 'next/link'
 import Image from 'next/image'
 
 const navigation = [
-  { name: 'Commercial', href: '/' },
-  { name: 'Film', href: '/' },
-  { name: 'Photo', href: '/pages/projects' },
+  { name: 'Comercial', href: '/pages/projects/comercial' },
+  { name: 'Film', href: '/pages/projects/film' },
+  { name: 'Photo', href: '/pages/projects/photo' },
   { name: 'Nosotros', href: '/about' },
   { name: 'Contacto', href: '/contact' },
-]
+];
+
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
