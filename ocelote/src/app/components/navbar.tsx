@@ -5,6 +5,7 @@ import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useEffect, useState } from 'react'
 
 const navigation = [
   { name: 'Comercial', href: '/pages/projects/comercial' },
@@ -20,8 +21,22 @@ function classNames(...classes: string[]) {
 }
 
 export default function Navbar() {
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
   return (
-    <Disclosure as="nav" className="w-full fixed top-0 z-10 bg-black md:bg-transparent lg:bg-transparent px-4 md:px-8 py-3">
+    <Disclosure as="nav"
+    className={classNames(
+      'w-full fixed top-0 z-10 transition-colors duration-100 px-4 md:px-8 py-3 ',
+      scrolled ? ' bg-black md:bg-black/50 backdrop-blur-md' : 'bg-black md:bg-transparent'
+    )}>
       <div className="mx-auto max-w-10xl flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
           <Image
