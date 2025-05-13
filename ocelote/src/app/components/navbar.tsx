@@ -35,7 +35,7 @@ export default function Navbar() {
     <Disclosure as="nav"
     className={classNames(
       'w-full fixed top-0 z-10 transition-colors duration-100 px-4 md:px-8 py-3 ',
-      scrolled ? ' bg-black md:bg-black/50 backdrop-blur-md' : 'bg-black md:bg-transparent'
+      scrolled ? ' bg-gray-950 md:bg-black/50 backdrop-blur-md' : 'bg-gray-950 md:bg-transparent'
     )}>
       <div className="mx-auto max-w-10xl flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
@@ -75,7 +75,7 @@ export default function Navbar() {
             key={item.name}
             as={Link}
             href={item.href}
-            className="block text-base hover:underline px-2"
+            className="block text-base hover:text-oceloteRed px-2"
           >
             {item.name}
           </DisclosureButton>
