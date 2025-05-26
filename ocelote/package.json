@@ -24,7 +24,8 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-dropzone": "^14.3.8",
-    "supabase": "^2.19.6"
+    "supabase": "^2.19.6",
+    "yet-another-react-lightbox": "^3.23.1"
   },
   "devDependencies": {
     "@types/node": "^20",
