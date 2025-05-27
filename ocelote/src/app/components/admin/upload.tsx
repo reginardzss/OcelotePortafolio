@@ -111,70 +111,108 @@ export default function Upload() {
   };
 
   return (
-    <div className="p-6 bg-gray-900 rounded-lg w-full max-w-3xl mx-auto">
+    <div className="m-20 p-6 bg-gray-100 rounded-lg w-full max-w-3xl mx-auto font-normal">
       {step === 1 && (
-        <div className="flex flex-col">
-          <h2 className="text-xl font-bold">Datos del Proyecto</h2>
-          <input type="text" placeholder="Project Name" value={projectData.project_name} onChange={(e) => setProjectData({ ...projectData, project_name: e.target.value })} />
-          <select value={projectData.project_type} onChange={(e) => setProjectData({ ...projectData, project_type: e.target.value })}>
-            <option value="comercial">Comercial</option>
-            <option value="films">Films</option>
-            <option value="photo">Photo</option>
+        <div className="flex flex-col gap-4">
+          <h2 className="text-3xl text-oceloteRed">Datos del Proyecto</h2>
+          <input 
+            className="p-2 border rounded"
+            type="text" 
+            placeholder="Nombre del proyecto" 
+            value={projectData.project_name} 
+            onChange={(e) => setProjectData({ ...projectData, project_name: e.target.value })} />
+          <select 
+            className="p-2 border rounded"
+            value={projectData.project_type} 
+            defaultValue=""
+            onChange={(e) => setProjectData({ ...projectData, project_type: e.target.value })}>
+              <option disabled={true} value="">--Selecciona una opción--</option>
+              <option value="comercial">Comercial</option>
+              <option value="films">Films</option>
+              <option value="photo">Photo</option>
           </select>
-          <input type="date" value={projectData.delivery_date} onChange={(e) => setProjectData({ ...projectData, delivery_date: e.target.value })} />
-          <input type="text" placeholder="Buscar cliente..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
-          <select onChange={(e) => setProjectData({ ...projectData, client_name: e.target.value })}>
+          <input 
+            className="p-2 border rounded"
+            type="date" 
+            value={projectData.delivery_date} 
+            onChange={(e) => setProjectData({ ...projectData, delivery_date: e.target.value })} />
+          <input 
+            className="p-2 border rounded"
+            type="text" 
+            placeholder="Buscar cliente..." 
+            value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+          <select className="p-2 border rounded" onChange={(e) => setProjectData({ ...projectData, client_name: e.target.value })}>
             <option value="">Seleccionar Cliente</option>
             {clients.filter(client => client.client_name.toLowerCase().includes(searchTerm.toLowerCase())).map(client => (
               <option key={client.id} value={client.client_name}>{client.client_name}</option>
             ))}
           </select>
-          <input type="checkbox" onChange={() => setProjectData({ ...projectData, isNewClient: !projectData.isNewClient })} /> Es un cliente nuevo
-          {projectData.isNewClient && <input type="text" placeholder="Nuevo Cliente" value={projectData.client_name} onChange={(e) => setProjectData({ ...projectData, client_name: e.target.value })} />}
+          <div className="flex flex-row gap-4">
+            <input 
+              type="checkbox" 
+              onChange={() => setProjectData({ ...projectData, isNewClient: !projectData.isNewClient })} /> 
+              <p className="text-black">Es un cliente nuevo</p>
+          </div>
+          {projectData.isNewClient && 
+            <input 
+              className="p-2 border rounded"
+              type="text" 
+              placeholder="Nuevo Cliente" 
+              value={projectData.client_name} 
+              onChange={(e) => setProjectData({ ...projectData, client_name: e.target.value })} />}
+
           <div className="flex justify-between">
-            <button onClick={() => router.push("/pages/admin/dashboard")} className="bg-gray-600 px-4 py-2 rounded">Back</button>
-            <button onClick={() => setStep(2)}>Next</button>
+            <button onClick={() => router.push("/pages/admin/dashboard")} className="bg-gray-400 px-4 py-2 rounded">Atrás</button>
+            <button className="bg-oceloteRed px-4 py-2 rounded" onClick={() => setStep(2)}>Siguiente</button>
           </div>
         </div>
       )}
       {step === 2 && (
-        <div>
-          <h2 className="text-xl font-bold text-white">Carga de Assets</h2>
-          <Dropzone onDrop={(files) => handleDrop(files, true)}>
-            {({ getRootProps, getInputProps }) => (
-              <div {...getRootProps()} className="border p-4 text-center text-white cursor-pointer">
-                <input {...getInputProps()} />
-                <p>Sube la portada o arrastra aquí</p>
-              </div>
-            )}
-          </Dropzone>
-          {cover && <p className="text-white">Portada subida: {cover.name}</p>}
-          <Dropzone onDrop={(files) => handleDrop(files)}>
-            {({ getRootProps, getInputProps }) => (
-              <div {...getRootProps()} className="border p-4 text-center text-white cursor-pointer">
-                <input {...getInputProps()} />
-                <p>Sube más imágenes o arrastra aquí</p>
-              </div>
-            )}
-          </Dropzone>
+        <div className="flex flex-col gap-4">
+          <h2 className="text-3xl text-oceloteRed">Carga de Assets</h2>
+          <div className="flex flex-col gap-4">
+            <Dropzone onDrop={(files) => handleDrop(files, true)}>
+              {({ getRootProps, getInputProps }) => (
+                <div {...getRootProps()} className="border-2 border-gray-300 border-dashed rounded-md bg-gray-200 text-center cursor-pointer h-[20lvh] flex justify-center items-center">
+                  <input {...getInputProps()} />
+                  <p className="text-gray-400 p-4">Sube la portada o arrastra aquí</p>
+                </div>
+              )}
+            </Dropzone>
+            {cover && <p className="text-white">Portada subida: {cover.name}</p>}
+            <Dropzone onDrop={(files) => handleDrop(files)}>
+              {({ getRootProps, getInputProps }) => (
+                <div {...getRootProps()}  className="border-2 border-gray-300 border-dashed rounded-md bg-gray-200 text-center cursor-pointer h-[20lvh] flex justify-center items-center">
+                  <input {...getInputProps()} />
+                  <p className="text-gray-400 p-4">Sube o arrastra aquí las imágenes o video</p>
+                </div>
+              )}
+            </Dropzone>
+          </div>
           {assets.map((asset, index) => (
             <p key={index} className="text-white">Imagen subida: {asset.name}</p>
           ))}
           <div className="flex justify-between">
-            <button onClick={() => setStep(1)}>Back</button>
-            <button onClick={() => setStep(3)}>Next</button>
+            <button className="bg-gray-400 px-4 py-2 rounded" onClick={() => setStep(1)}>Atrás</button>
+            <button className="bg-oceloteRed px-4 py-2 rounded" onClick={() => setStep(3)}>Siguiente</button>
           </div>
         </div>
       )}
       {step === 3 && (
-        <div>
-          <h2 className="text-xl font-bold text-white">Vista previa</h2>
-          <p>📌 Nombre: {projectData.project_name}</p>
-          <p>🎬 Tipo: {projectData.project_type}</p>
-          <p>📅 Entrega: {projectData.delivery_date}</p>
-          <p>👤 Cliente: {projectData.client_name}</p>
-          <p>📂 Imágenes subidas: {assets.length}</p>
-          <button onClick={handleUpload}>Publicar</button>
+        <div className="flex flex-col gap-4">
+          <h2 className="text-3xl text-oceloteRed">Vista previa</h2>
+          <div className="flex flex-col gap-5 p-5 border rounded-md bg-gray-200">
+            <p className="text-black">📌 Nombre: {projectData.project_name}</p>
+            <p className="text-black">🎬 Tipo: {projectData.project_type}</p>
+            <p className="text-black">📅 Entrega: {projectData.delivery_date}</p>
+            <p className="text-black">👤 Cliente: {projectData.client_name}</p>
+            <p className="text-black">📂 Imágenes subidas: {assets.length}</p>
+          </div>
+          <div className="flex justify-between">
+            <button className="bg-gray-400 px-4 py-2 rounded" onClick={() => setStep(2)}>Atrás</button>
+            <button className="bg-oceloteRed px-4 py-2 rounded" onClick={handleUpload}>Publicar</button>
+          </div>
+          
         </div>
       )}
       {step === 4 && (
