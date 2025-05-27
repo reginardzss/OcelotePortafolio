@@ -111,7 +111,8 @@ export default function Upload() {
   };
 
   return (
-    <div className="m-20 p-6 bg-gray-100 rounded-lg w-full max-w-3xl mx-auto font-normal">
+    <div className="bg-gray-100 md:bg-transparent flex justify-center">
+    <div className="m-20 lg:m-36 p-12 lg:p-6 bg-gray-100 rounded-lg h-auto w-full max-w-3xl mx-auto font-normal">
       {step === 1 && (
         <div className="flex flex-col gap-4">
           <h2 className="text-3xl text-oceloteRed">Datos del Proyecto</h2>
@@ -222,6 +223,7 @@ export default function Upload() {
         </div>
       )}
       {loading && <ProgressBar progress={progress} />}
+    </div>
     </div>
   );
 }
