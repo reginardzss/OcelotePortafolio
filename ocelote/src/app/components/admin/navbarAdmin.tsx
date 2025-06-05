@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react'
 
 const navigation = [
   { name: 'Upload', href: '/pages/admin/upload' },
-  { name: 'Projects', href: '/pages/projects/film' },
+  { name: 'Projects', href: '/pages/admin/projects' },
 ];
 
 
