@@ -1,3 +1,5 @@
+//ocelote/src/app/components/admin/upload.tsx
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -23,6 +25,10 @@ export default function Upload() {
   const [assets, setAssets] = useState<File[]>([]);
   const [cover, setCover] = useState<File | null>(null);
   const [uploadedProject, setUploadedProject] = useState(null);
+  const [errors, setErrors] = useState<string[]>([]);
+  const filteredClients = clients.filter((client) =>
+    client.client_name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   useEffect(() => {
     const fetchClients = async () => {
@@ -34,11 +40,47 @@ export default function Upload() {
 
   const handleDrop = (acceptedFiles: File[], isCover = false) => {
     if (isCover) {
+      if (acceptedFiles.length > 1) return; // Solo una imagen
       setCover(acceptedFiles[0]);
     } else {
       setAssets((prev) => [...prev, ...acceptedFiles]);
     }
   };
+
+  const handleRemoveAsset = (index: number) => {
+    setAssets((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleRemoveCover = () => {
+    setCover(null);
+  };
+
+  const validateStepOne = () => {
+    const missingFields = Object.entries(projectData).filter(
+      ([key, value]) => key !== "isNewClient" && !value
+    );
+    if (missingFields.length > 0) {
+      setErrors(["Llena todos los campos para avanzar"]);
+      return false;
+    }
+    setErrors([]);
+    return true;
+  };
+
+  const validateStepTwo = () => {
+    const errors = [];
+    if (!cover) errors.push("Debes subir una imagen de portada");
+    if (assets.length === 0) errors.push("Debes subir al menos una imagen del proyecto");
+    setErrors(errors);
+    return errors.length === 0;
+  };
+
+  const nextStep = () => {
+    if (step === 1 && !validateStepOne()) return;
+    if (step === 2 && !validateStepTwo()) return;
+    setStep(step + 1);
+  };
+
 
   const uploadFile = async (file: File, folder: string) => {
     try {
@@ -123,7 +165,7 @@ export default function Upload() {
             value={projectData.project_name} 
             onChange={(e) => setProjectData({ ...projectData, project_name: e.target.value })} />
           <select 
-            className="p-2 border rounded"
+            className=" p-2 border rounded"
             value={projectData.project_type} 
             defaultValue=""
             onChange={(e) => setProjectData({ ...projectData, project_type: e.target.value })}>
@@ -137,17 +179,35 @@ export default function Upload() {
             type="date" 
             value={projectData.delivery_date} 
             onChange={(e) => setProjectData({ ...projectData, delivery_date: e.target.value })} />
-          <input 
+          <input
+            type="text"
             className="p-2 border rounded"
-            type="text" 
-            placeholder="Buscar cliente..." 
-            value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
-          <select className="p-2 border rounded" onChange={(e) => setProjectData({ ...projectData, client_name: e.target.value })}>
-            <option value="">Seleccionar Cliente</option>
-            {clients.filter(client => client.client_name.toLowerCase().includes(searchTerm.toLowerCase())).map(client => (
-              <option key={client.id} value={client.client_name}>{client.client_name}</option>
-            ))}
-          </select>
+            placeholder="Buscar o seleccionar cliente"
+            disabled={projectData.isNewClient}
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setProjectData({ ...projectData, client_name: e.target.value });
+            }}
+          />
+          <div className="relative">
+            {searchTerm && filteredClients.length > 0 && (
+              <ul className="absolute bg-gray-200 border rounded shadow-md max-h-48 w-full overflow-auto z-10">
+                {filteredClients.map((client) => (
+                  <li
+                    key={client.id}
+                    className=" px-4 py-2 text-gray-700 hover:bg-gray-300 cursor-pointer"
+                    onClick={() => {
+                      setProjectData({ ...projectData, client_name: client.client_name });
+                      setSearchTerm(client.client_name);
+                    }}
+                  >
+                    {client.client_name}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
           <div className="flex flex-row gap-4">
             <input 
               type="checkbox" 
@@ -162,25 +222,34 @@ export default function Upload() {
               value={projectData.client_name} 
               onChange={(e) => setProjectData({ ...projectData, client_name: e.target.value })} />}
 
-          <div className="flex justify-between">
-            <button onClick={() => router.push("/pages/admin/dashboard")} className="bg-gray-400 px-4 py-2 rounded">Atrás</button>
-            <button className="bg-oceloteRed px-4 py-2 rounded" onClick={() => setStep(2)}>Siguiente</button>
-          </div>
+          <div className="flex justify-end">
+            <button className="bg-oceloteRed hover:bg-oceloteRedHover px-4 py-2 rounded" onClick={() => setStep(2)}>Siguiente</button>
+ </div>
         </div>
       )}
       {step === 2 && (
         <div className="flex flex-col gap-4">
           <h2 className="text-3xl text-oceloteRed">Carga de Assets</h2>
           <div className="flex flex-col gap-4">
-            <Dropzone onDrop={(files) => handleDrop(files, true)}>
+          <p className="text-gray-700">Portada (solo una imagen):</p>
+            <Dropzone onDrop={(files) => handleDrop(files, true)} multiple={false}>
               {({ getRootProps, getInputProps }) => (
                 <div {...getRootProps()} className="border-2 border-gray-300 border-dashed rounded-md bg-gray-200 text-center cursor-pointer h-[20lvh] flex justify-center items-center">
                   <input {...getInputProps()} />
-                  <p className="text-gray-400 p-4">Sube la portada o arrastra aquí</p>
+                    {cover ? (
+                    <div className="flex flex-col items-center gap-2">
+                      {cover && <p className="text-gray-700">Portada subida: {cover.name}</p>}
+                      
+                      <button className="border border-oceloteRed text-oceloteRed hover:text-oceloteRedHover px-4 py-2 rounded" onClick={handleRemoveCover}>Eliminar</button>
+                    </div>
+                    ) : (
+                      <p className="text-gray-400 p-4">Sube la portada o arrastra aquí</p>
+                    )}
                 </div>
               )}
             </Dropzone>
-            {cover && <p className="text-white">Portada subida: {cover.name}</p>}
+            
+            <p className="text-gray-700">Imágenes del proyecto:</p>
             <Dropzone onDrop={(files) => handleDrop(files)}>
               {({ getRootProps, getInputProps }) => (
                 <div {...getRootProps()}  className="border-2 border-gray-300 border-dashed rounded-md bg-gray-200 text-center cursor-pointer h-[20lvh] flex justify-center items-center">
@@ -189,13 +258,21 @@ export default function Upload() {
                 </div>
               )}
             </Dropzone>
+            
           </div>
-          {assets.map((asset, index) => (
-            <p key={index} className="text-white">Imagen subida: {asset.name}</p>
-          ))}
+          <div className="max-h-40 px-4 overflow-y-auto border border-gray-300 rounded-md">
+            <ul>
+              {assets.map((file, index) => (
+                <li key={index} className="flex justify-between text-gray-700 my-2">
+                  {file.name}
+                  <button className="border border-oceloteRed text-oceloteRed hover:text-oceloteRedHover px-4 py-2 rounded" onClick={() => handleRemoveAsset(index)}>Eliminar</button>
+                </li>
+              ))}
+            </ul>
+          </div>
           <div className="flex justify-between">
-            <button className="bg-gray-400 px-4 py-2 rounded" onClick={() => setStep(1)}>Atrás</button>
-            <button className="bg-oceloteRed px-4 py-2 rounded" onClick={() => setStep(3)}>Siguiente</button>
+            <button className="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded" onClick={() => setStep(1)}>Atrás</button>
+            <button className="bg-oceloteRed hover:bg-oceloteRedHover px-4 py-2 rounded" onClick={() => setStep(3)}>Siguiente</button>
           </div>
         </div>
       )}
@@ -210,8 +287,8 @@ export default function Upload() {
             <p className="text-black">📂 Imágenes subidas: {assets.length}</p>
           </div>
           <div className="flex justify-between">
-            <button className="bg-gray-400 px-4 py-2 rounded" onClick={() => setStep(2)}>Atrás</button>
-            <button className="bg-oceloteRed px-4 py-2 rounded" onClick={handleUpload}>Publicar</button>
+            <button className="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded" onClick={() => setStep(2)}>Atrás</button>
+            <button className="bg-oceloteRed hover:bg-oceloteRedHover px-4 py-2 rounded" onClick={handleUpload}>Publicar</button>
           </div>
           
         </div>
@@ -223,6 +300,10 @@ export default function Upload() {
         </div>
       )}
       {loading && <ProgressBar progress={progress} />}
+
+      {errors.map((err, idx) => (
+        <p key={idx} className="text-red-500">{err}</p>
+      ))}
     </div>
     </div>
   );
