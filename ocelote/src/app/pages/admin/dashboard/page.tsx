@@ -14,7 +14,7 @@ export default function AdminDashboard() {
             const { data: authData, error } = await supabase.auth.getUser();
 
             if (error || !authData.user) {
-                console.warn("🔴 Usuario no autenticado, redirigiendo a login...");
+                console.warn("🔴 Usuario no autenticado, redirigiendo a login dashboard...");
                 router.push("/pages/admin/login");
                 return;
             }
